@@ -1,17 +1,29 @@
+import { updateStatus } from "@/app/actions";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { AVAILABLE_STATUSES } from "@/data/invoices";
 import { db } from "@/db";
 import { Invoices } from "@/db/schemas";
 import { cn } from "@/lib/utils";
-import { eq } from "drizzle-orm";
+import { auth } from "@clerk/nextjs/server";
+import { and, eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 
 const InvoicePage = async ({ params }: { params: { id: string } }) => {
-    const invoiceId = parseInt(params.id);
+    const invoiceId = await parseInt(params.id);
+    const { userId } = await auth();
+
+    if (!userId) return;
+
     if (isNaN(invoiceId)) {
         throw new Error('Invalid Invoice Id');
     }
     // [...] -> get the first element of an array
-    const [invoice] = await db.select().from(Invoices).where(eq(Invoices.id, invoiceId));
+    const [invoice] = await db.select().from(Invoices).where(and(
+        eq(Invoices.id, invoiceId),
+        eq(Invoices.userId, userId)
+    ));
     if (!invoice) notFound();
 
     return (
@@ -31,6 +43,24 @@ const InvoicePage = async ({ params }: { params: { id: string } }) => {
                         {invoice.status}
                     </Badge>
                 </h1>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="outline">Change Status</Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                        {AVAILABLE_STATUSES.map((el) =>
+                            <DropdownMenuCheckboxItem
+                                checked={invoice.status == el.id}
+                                key={el.id}>
+                                <form action={updateStatus}>
+                                    <input type='hidden' name='invoiceId' value={invoiceId} />
+                                    <input type="hidden" name='status' value={el.id} />
+                                    <button type="submit">{el.label}</button>
+                                </form>
+                            </DropdownMenuCheckboxItem>
+                        )}
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
 
             <p className="text-3xl mb-3">${(invoice.value / 100).toFixed(2)}</p>

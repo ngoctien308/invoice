@@ -13,11 +13,15 @@ import {
 import { db } from "@/db";
 import { Invoices } from "@/db/schemas";
 import { cn } from "@/lib/utils";
+import { auth } from "@clerk/nextjs/server";
+import { eq } from "drizzle-orm";
 import { CirclePlus } from "lucide-react";
 import Link from "next/link";
 
 const DashboardPage = async () => {
-    const invoices = await db.select().from(Invoices);
+    const { userId } = await auth();
+    if (!userId) return;
+    const invoices = await db.select().from(Invoices).where(eq(Invoices.userId, userId));
     let total = 0;
 
     return (
