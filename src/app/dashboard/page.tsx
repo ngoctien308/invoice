@@ -14,18 +14,33 @@ import { db } from "@/db";
 import { Customers, Invoices } from "@/db/schemas";
 import { cn } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";
-import { eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import { CirclePlus } from "lucide-react";
 import Link from "next/link";
 
 const DashboardPage = async () => {
-    const { userId } = await auth();
+    const { userId, orgId } = await auth();
     if (!userId) return;
-    const invoices = await db
-        .select()
-        .from(Invoices)
-        .innerJoin(Customers, eq(Invoices.customerId, Customers.id))
-        .where(eq(Invoices.userId, userId));
+
+    let invoices;
+    if (orgId) {
+        invoices = await db
+            .select()
+            .from(Invoices)
+            .innerJoin(Customers, eq(Invoices.customerId, Customers.id))
+            .where(eq(Invoices.organizationId, orgId));
+
+    } else {
+        invoices = await db
+            .select()
+            .from(Invoices)
+            .innerJoin(Customers, eq(Invoices.customerId, Customers.id))
+            .where(and(
+                eq(Invoices.userId, userId),
+                isNull(Invoices.organizationId)
+            ));
+    }
+
     let total = 0;
 
     return (

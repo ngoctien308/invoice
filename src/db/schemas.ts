@@ -14,7 +14,8 @@ export const Invoices = pgTable('invoices', {
     description: text('description').notNull(),
     status: statusEnum('status').default('open'),
     userId: text('userId').notNull(),
-    customerId: integer('customerId').notNull().references(() => Customers.id)
+    customerId: integer('customerId').notNull().references(() => Customers.id),
+    organizationId: text('organizationId')
 })
 
 export const Customers = pgTable('customers', {
@@ -22,5 +23,6 @@ export const Customers = pgTable('customers', {
     createTs: timestamp('timestamp1').notNull().defaultNow(),    
     userId: text('userId').notNull(),
     name: text('name').notNull(),
-    email: text('email').notNull().unique()
+    email: text('email').notNull().unique(),
+    organizationId: text('organizationId')
 })
