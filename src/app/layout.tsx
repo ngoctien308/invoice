@@ -25,7 +25,9 @@ export default function RootLayout({
         >
           <Container className="min-h-screen grid grid-rows-[auto_1fr_auto]">
             <Header />
-            {children}
+            <main>
+              {children}
+            </main>
             <Footer />
           </Container>
         </body>

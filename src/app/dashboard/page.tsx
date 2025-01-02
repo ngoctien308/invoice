@@ -11,7 +11,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { db } from "@/db";
-import { Invoices } from "@/db/schemas";
+import { Customers, Invoices } from "@/db/schemas";
 import { cn } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";
 import { eq } from "drizzle-orm";
@@ -21,7 +21,11 @@ import Link from "next/link";
 const DashboardPage = async () => {
     const { userId } = await auth();
     if (!userId) return;
-    const invoices = await db.select().from(Invoices).where(eq(Invoices.userId, userId));
+    const invoices = await db
+        .select()
+        .from(Invoices)
+        .innerJoin(Customers, eq(Invoices.customerId, Customers.id))
+        .where(eq(Invoices.userId, userId));
     let total = 0;
 
     return (
@@ -47,24 +51,24 @@ const DashboardPage = async () => {
                 </TableHeader>
                 <TableBody>
                     {invoices.map(invoice => {
-                        total += invoice.value / 100;
+                        total += invoice.invoices.value / 100;
 
-                        return <TableRow key={invoice.id}>
-                            <TableCell className="py-4"><Link href={`/invoices/${invoice.id}`} className="font-medium py-4"> {invoice.createTs.toLocaleDateString()}</Link></TableCell>
-                            <TableCell className="py-4"><Link href={`/invoices/${invoice.id}`} className="font-medium py-4">Pham Ngoc Tien</Link></TableCell>
-                            <TableCell className="py-4"><Link href={`/invoices/${invoice.id}`} className="font-medium py-4">ngoctien30804@gmail.com</Link></TableCell>
+                        return <TableRow key={invoice.invoices.id}>
+                            <TableCell className="py-4"><Link href={`/invoices/${invoice.invoices.id}`} className="font-medium py-4"> {invoice.invoices.createTs.toLocaleDateString()}</Link></TableCell>
+                            <TableCell className="py-4"><Link href={`/invoices/${invoice.invoices.id}`} className="font-medium py-4">{invoice.customers.name}</Link></TableCell>
+                            <TableCell className="py-4"><Link href={`/invoices/${invoice.invoices.id}`} className="font-medium py-4">{invoice.customers.email}</Link></TableCell>
                             <TableCell className="py-4">
-                                <Link href={`/invoices/${invoice.id}`}>
+                                <Link href={`/invoices/${invoice.invoices.id}`}>
                                     <Badge className={cn(
                                         'capitalize',
-                                        invoice.status == 'open' && 'bg-blue-500',
-                                        invoice.status == 'paid' && 'bg-green-600',
-                                        invoice.status == 'void' && 'bg-zinc-700',
-                                        invoice.status == 'uncollectible' && 'bg-red-600',
-                                    )}>{invoice.status}</Badge>
+                                        invoice.invoices.status == 'open' && 'bg-blue-500',
+                                        invoice.invoices.status == 'paid' && 'bg-green-600',
+                                        invoice.invoices.status == 'void' && 'bg-zinc-700',
+                                        invoice.invoices.status == 'uncollectible' && 'bg-red-600',
+                                    )}>{invoice.invoices.status}</Badge>
                                 </Link>
                             </TableCell>
-                            <TableCell className="text-right"><Link href={`/invoices/${invoice.id}`} className="font-medium py-4">{(invoice.value / 100).toFixed(2)}</Link></TableCell>
+                            <TableCell className="text-right"><Link href={`/invoices/${invoice.invoices.id}`} className="font-medium py-4">{(invoice.invoices.value / 100).toFixed(2)}</Link></TableCell>
                         </TableRow>
                     })}
                 </TableBody>
