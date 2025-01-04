@@ -15,7 +15,8 @@ import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMe
 import { AVAILABLE_STATUSES } from "@/data/invoices";
 import { Customers, Invoices } from "@/db/schemas";
 import { cn } from "@/lib/utils";
-import { Ellipsis, Trash } from "lucide-react";
+import { CreditCard, Ellipsis, Trash } from "lucide-react";
+import Link from "next/link";
 import { useOptimistic } from "react";
 
 interface InvoiceProps {
@@ -85,6 +86,11 @@ const Invoice = ({ invoice }: InvoiceProps) => {
                                         <Trash /><button>Delete invoice</button>
                                     </DropdownMenuItem>
                                 </DialogTrigger>
+                                <DropdownMenuItem>
+                                    <Link className="flex items-center gap-2" href={`/invoices/${invoice.id}/payment`}>
+                                        <CreditCard className="w-4" />Payment
+                                    </Link>
+                                </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
                         <DialogContent>

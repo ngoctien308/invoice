@@ -58,7 +58,7 @@ const InvoicePage = async ({ params }: { params: { id: string } }) => {
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                        <BreadcrumbPage>Invoice</BreadcrumbPage>
+                        <BreadcrumbPage>Invoice #{invoiceId}</BreadcrumbPage>
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
