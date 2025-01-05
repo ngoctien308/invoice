@@ -6,7 +6,7 @@ import Header from "@/components/Header";
 import Container from "@/components/Container";
 import Footer from "@/components/Footer";
 
-const inter = Inter();
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: "Invoices"
