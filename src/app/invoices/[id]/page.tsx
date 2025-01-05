@@ -1,8 +1,6 @@
 import {
     Breadcrumb,
-    BreadcrumbEllipsis,
     BreadcrumbItem,
-    BreadcrumbLink,
     BreadcrumbList,
     BreadcrumbPage,
     BreadcrumbSeparator,

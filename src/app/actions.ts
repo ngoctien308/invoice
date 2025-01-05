@@ -3,7 +3,7 @@
 import { db } from "@/db";
 import { Customers, Invoices, Status } from "@/db/schemas";
 import { auth } from "@clerk/nextjs/server";
-import { and, eq, isNull, or } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";

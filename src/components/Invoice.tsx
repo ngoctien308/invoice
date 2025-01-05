@@ -34,6 +34,7 @@ const Invoice = ({ invoice }: InvoiceProps) => {
         try {
             await updateStatus(formData);
         } catch (error) {
+            console.log(error);
             setCurrentStatus(originalStatus);
         }
     };

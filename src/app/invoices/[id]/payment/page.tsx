@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { db } from "@/db";
 import { Customers, Invoices } from "@/db/schemas";
-import { eq, is } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Check, CreditCard } from "lucide-react";
