@@ -13,7 +13,7 @@ import { and, eq, isNull } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 
-const InvoicePage = async ({ params }: { params: { id: string } }) => {
+const InvoicePage = async ({ params }: { params: Promise<{ id: string }> }) => {
     const { id: invoiceId } = await params;
     const { userId, orgId } = await auth();
 

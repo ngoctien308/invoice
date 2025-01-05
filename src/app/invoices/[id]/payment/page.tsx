@@ -19,8 +19,8 @@ import { createPayment, updateStatusWithoutRevalidating } from "@/app/actions";
 import Stripe from "stripe";
 
 interface InvoicePaymentProps {
-    params: { id: string };
-    searchParams: { status: string, sessionId: string }
+    params: Promise<{ id: string }>;
+    searchParams: Promise<{ status: string, sessionId: string }>
 }
 
 const InvoicePaymentPage = async ({ params, searchParams }: InvoicePaymentProps) => {
